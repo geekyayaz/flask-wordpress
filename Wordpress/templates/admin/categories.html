@@ -1,0 +1,81 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0">Categories</h1>
+    <a href="{{ url_for('admin_category_new') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> New Category
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if categories %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Slug</th>
+                        <th>Posts</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                    <tr>
+                        <td>
+                            <strong>{{ category.name }}</strong>
+                            {% if category.description %}
+                            <br><small class="text-muted">{{ category.description[:100] }}...</small>
+                            {% endif %}
+                        </td>
+                        <td><code>{{ category.slug }}</code></td>
+                        <td>{{ category.posts|length }}</td>
+                        <td>{{ category.created_at.strftime('%m/%d/%Y') }}</td>
+                        <td>
+                            <a href="{{ url_for('admin_category_edit', id=category.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <button onclick="deleteCategory({{ category.id }})" class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p>No categories found.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Delete Category Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this category? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function deleteCategory(categoryId) {
+    document.getElementById('deleteForm').action = '/admin/categories/' + categoryId + '/delete';
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+{% endblock %}

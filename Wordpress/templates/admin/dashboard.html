@@ -1,0 +1,134 @@
+<!-- templates/admin/dashboard.html -->
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.total_posts }}</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Total Posts</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-edit fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.published_posts }}</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Published</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.total_users }}</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Users</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.pending_comments }}</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Pending Comments</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-comments fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Posts -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <h6 class="m-0 font-weight-bold">Recent Posts</h6>
+                <a href="{{ url_for('admin_posts') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_posts %}
+                    {% for post in recent_posts %}
+                    <div class="d-flex align-items-center py-2">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">{{ post.title }}</h6>
+                            <small class="text-muted">{{ post.author.full_name }} - {{ post.created_at.strftime('%m/%d/%Y') }}</small>
+                        </div>
+                        <span class="badge bg-{{ 'success' if post.status == 'published' else 'warning' }}">
+                            {{ post.status.title() }}
+                        </span>
+                    </div>
+                    {% if not loop.last %}<hr>{% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No posts yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Comments -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <h6 class="m-0 font-weight-bold">Recent Comments</h6>
+                <a href="{{ url_for('admin_comments') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_comments %}
+                    {% for comment in recent_comments %}
+                    <div class="d-flex align-items-center py-2">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">{{ comment.author_name }}</h6>
+                            <small class="text-muted">{{ comment.content[:50] }}...</small>
+                            <br><small class="text-muted">{{ comment.created_at.strftime('%m/%d/%Y') }}</small>
+                        </div>
+                        <span class="badge bg-{{ 'success' if comment.status == 'approved' else 'warning' }}">
+                            {{ comment.status.title() }}
+                        </span>
+                    </div>
+                    {% if not loop.last %}<hr>{% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No comments yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

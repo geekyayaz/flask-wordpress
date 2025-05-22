@@ -1,0 +1,146 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block extra_css %}
+<!-- No extra CSS needed for CKEditor -->
+{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0">{{ title }}</h1>
+    <a href="{{ url_for('admin_posts') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Posts
+    </a>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        {{ form.title(class="form-control") }}
+                        {% if form.title.errors %}
+                            {% for error in form.title.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content</label>
+                        {{ form.content(class="form-control", id="content", rows="15") }}
+                        {% if form.content.errors %}
+                            {% for error in form.content.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="excerpt" class="form-label">Excerpt</label>
+                        {{ form.excerpt(class="form-control", rows="3") }}
+                        <small class="form-text text-muted">Optional short description</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEO Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">SEO Settings</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="meta_title" class="form-label">SEO Title</label>
+                        {{ form.meta_title(class="form-control") }}
+                        <small class="form-text text-muted">Leave empty to use post title</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="meta_description" class="form-label">SEO Description</label>
+                        {{ form.meta_description(class="form-control", rows="2") }}
+                        <small class="form-text text-muted">Leave empty to use excerpt</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Publish Box -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Publish</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        {{ form.status(class="form-select") }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="post_type" class="form-label">Type</label>
+                        {{ form.post_type(class="form-select") }}
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            {% if post %}Update{% else %}Create{% endif %} {{ form.post_type.data or 'Post' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Categories & Tags -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Categories & Tags</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="category_id" class="form-label">Category</label>
+                        {{ form.category_id(class="form-select") }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tags" class="form-label">Tags</label>
+                        {{ form.tags(class="form-control") }}
+                        <small class="form-text text-muted">Separate tags with commas</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Featured Image -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Featured Image</h6>
+                </div>
+                <div class="card-body">
+                    {% if post and post.featured_image %}
+                    <div class="mb-3">
+                        <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
+                             alt="Current featured image" class="img-fluid">
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        {{ form.featured_image(class="form-control") }}
+                        <small class="form-text text-muted">Upload a new image to replace current one</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.ckeditor.com/4.20.2/standard/ckeditor.js"></script>
+<script>
+  CKEDITOR.replace('content');
+</script>
+{% endblock %}
